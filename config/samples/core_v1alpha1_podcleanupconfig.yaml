@@ -1,0 +1,6 @@
+apiVersion: core.craftdemo.com/v1alpha1
+kind: PodCleanupConfig
+metadata:
+  name: podcleanupconfig-sample
+spec:
+  # TODO(user): Add fields here

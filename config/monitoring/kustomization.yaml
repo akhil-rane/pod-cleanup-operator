@@ -1,0 +1,3 @@
+resources:
+- prometheus_deployment.yaml
+- prometheus_configmap.yaml
