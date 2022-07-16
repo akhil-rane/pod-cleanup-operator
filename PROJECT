@@ -1,0 +1,31 @@
+domain: craftdemo.com
+layout:
+- go.kubebuilder.io/v3
+plugins:
+  manifests.sdk.operatorframework.io/v2: {}
+  scorecard.sdk.operatorframework.io/v2: {}
+projectName: pod-cleanup-operator
+repo: github.com/akhil-rane/pod-cleanup-operator
+resources:
+- controller: true
+  group: core
+  kind: Pod
+  path: k8s.io/api/core/v1
+  version: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: craftdemo.com
+  group: core
+  kind: PodCleanupConfig
+  path: github.com/akhil-rane/pod-cleanup-operator/api/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: craftdemo.com
+  group: operator
+  kind: PodCleanupConfig
+  path: github.com/akhil-rane/pod-cleanup-operator/api/v1alpha1
+  version: v1alpha1
+version: "3"

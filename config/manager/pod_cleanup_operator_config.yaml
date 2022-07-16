@@ -1,0 +1,8 @@
+apiVersion: operator.craftdemo.com/v1alpha1
+kind: PodCleanupConfig
+metadata:
+  name: config
+  namespace: pod-cleanup-operator-system
+spec:
+  deletionMode: Normal
+  deletionDelayInMinutes: 2

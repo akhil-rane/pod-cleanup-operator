@@ -1,0 +1,23 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: prometheus-config
+  namespace: monitoring
+data:
+  prometheus.yml: |+
+    global:
+      scrape_interval:     15s
+    scrape_configs:
+      - job_name: 'prometheus'
+        scrape_interval: 5s
+        static_configs:
+          - targets: ['localhost:9090']
+      - job_name: 'pod-cleanup-operator'
+        kubernetes_sd_configs:
+          - role: endpoints
+        relabel_configs:
+          - source_labels:
+              - __meta_kubernetes_namespace
+              - __meta_kubernetes_service_name
+            action: keep
+            regex: pod-cleanup-operator-system;pod-cleanup-operator-controller-manager-metrics-service
