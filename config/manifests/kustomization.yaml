@@ -3,7 +3,7 @@
 resources:
 - bases/pod-cleanup-operator.clusterserviceversion.yaml
 - ../default
-- ../samples
+- ../operator_configuration
 - ../scorecard
 
 # [WEBHOOK] To enable webhooks, uncomment all the sections with [WEBHOOK] prefix.

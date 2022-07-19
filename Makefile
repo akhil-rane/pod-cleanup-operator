@@ -138,17 +138,22 @@ install: manifests kustomize ## Install CRDs into the K8s cluster specified in ~
 uninstall: manifests kustomize ## Uninstall CRDs from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
 	$(KUSTOMIZE) build config/crd | kubectl delete --ignore-not-found=$(ignore-not-found) -f -
 
-.PHONY: monitoring
-monitoring: ## Deploy monitoring resources from config/monitoring
+.PHONY: deploy-monitoring
+deploy-monitoring: ## Deploy monitoring resources from config/monitoring
 	$(KUSTOMIZE) build config/monitoring | kubectl apply -f -
 
 .PHONY: deploy
-deploy: manifests monitoring ## Deploy controller to the K8s cluster specified in ~/.kube/config.
+deploy: manifests deploy-monitoring ## Deploy controller to the K8s cluster specified in ~/.kube/config.
 	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
 	$(KUSTOMIZE) build config/default | kubectl apply -f -
+	$(KUSTOMIZE) build config/operator_configuration | kubectl create -f -
+
+.PHONY: undeploy-monitoring
+undeploy-monitoring: ## Undeploy monitoring stack
+	$(KUSTOMIZE) build config/monitoring | kubectl delete --ignore-not-found=$(ignore-not-found) -f -
 
 .PHONY: undeploy
-undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
+undeploy: undeploy-monitoring ## Undeploy controller from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
 	$(KUSTOMIZE) build config/default | kubectl delete --ignore-not-found=$(ignore-not-found) -f -
 
 ##@ Build Dependencies

@@ -19,23 +19,25 @@ package controllers
 import (
 	"context"
 	"fmt"
-	"github.com/akhil-rane/pod-cleanup-operator/api/v1alpha1"
-	log "github.com/sirupsen/logrus"
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
-	"sigs.k8s.io/controller-runtime/pkg/builder"
-	"sigs.k8s.io/controller-runtime/pkg/source"
 	"time"
 
+	log "github.com/sirupsen/logrus"
+
 	corev1 "k8s.io/api/core/v1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/builder"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+	"sigs.k8s.io/controller-runtime/pkg/source"
+
+	"github.com/akhil-rane/pod-cleanup-operator/api/v1alpha1"
 )
 
 // PodReconciler reconciles a Pod object
@@ -170,7 +172,6 @@ func (r *PodReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	allPodsMapFn := handler.EnqueueRequestsFromMapFunc(func(a client.Object) []reconcile.Request {
 		log.Info("requeueing all Pods")
 		var requests []reconcile.Request
-
 		// Large Kubernetes cluster can have around 5000 worker nodes and each node in popular kubernetes platforms
 		// (like Google Kubernetes Engine) can run around 100 pods. This leads to worst case scenario of cluster running
 		// around 500000 pods. If we consider maximum resource size allowed by etcd to be around 2 Mb, it can lead to out
@@ -226,11 +227,12 @@ func (r *PodReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	}
 
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&corev1.Pod{}).
-		WithEventFilter(cleanupPredicate).
+		For(
+			&corev1.Pod{},
+			builder.WithPredicates(cleanupPredicate)).
 		Watches(
 			&source.Kind{Type: &v1alpha1.PodCleanupConfig{}},
 			allPodsMapFn,
-			builder.WatchesOption(builder.WithPredicates(configPredicate))).
+			builder.WithPredicates(configPredicate)).
 		Complete(r)
 }

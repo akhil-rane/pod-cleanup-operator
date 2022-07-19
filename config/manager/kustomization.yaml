@@ -1,6 +1,5 @@
 resources:
 - manager.yaml
-- pod_cleanup_operator_config.yaml
 
 generatorOptions:
   disableNameSuffixHash: true
@@ -14,4 +13,3 @@ kind: Kustomization
 images:
 - name: controller
   newName: akhilrane/pod-cleanup-operator
-  newTag: latest

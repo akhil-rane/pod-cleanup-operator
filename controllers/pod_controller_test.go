@@ -18,24 +18,23 @@ package controllers
 
 import (
 	"context"
-	"github.com/akhil-rane/pod-cleanup-operator/api/v1alpha1"
+	"testing"
+	"time"
+
 	log "github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
+
+	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
-	"sigs.k8s.io/controller-runtime/pkg/reconcile"
-	"testing"
-	"time"
-
-	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/assert"
-
-	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes/scheme"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
-	//+kubebuilder:scaffold:imports
+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+
+	"github.com/akhil-rane/pod-cleanup-operator/api/v1alpha1"
 )
 
 const (
@@ -55,7 +54,6 @@ func TestReconcile(t *testing.T) {
 		name                 string
 		existing             []runtime.Object
 		expectErr            bool
-		validate             func(client.Client, *testing.T)
 		expectedDeletion     bool
 		validateRequeueAfter func(time.Duration, client.Client, *testing.T)
 	}{
@@ -145,9 +143,6 @@ func TestReconcile(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			mockCtrl := gomock.NewController(t)
-			defer mockCtrl.Finish()
-
 			fakeClient := fake.NewClientBuilder().WithRuntimeObjects(test.existing...).Build()
 			pr := &PodReconciler{
 				Client: fakeClient,
@@ -160,10 +155,9 @@ func TestReconcile(t *testing.T) {
 				},
 			})
 
-			if err != nil && !test.expectErr {
+			if !test.expectErr {
 				assert.NoError(t, err, "Unexpected error: %v", err)
-			}
-			if err == nil && test.expectErr {
+			} else {
 				assert.Error(t, err, "Expected error but got none")
 			}
 
