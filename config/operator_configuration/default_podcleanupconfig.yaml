@@ -1,7 +1,7 @@
 apiVersion: operator.craftdemo.com/v1alpha1
 kind: PodCleanupConfig
 metadata:
-  name: config
+  name: pod-cleanup-operator-config
   namespace: pod-cleanup-operator-system
 spec:
   deletionMode: Normal

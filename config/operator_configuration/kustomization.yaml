@@ -1,0 +1,4 @@
+## Append operator_configuration you want in your CSV to this file as resources ##
+resources:
+- default_podcleanupconfig.yaml
+#+kubebuilder:scaffold:manifestskustomizesamples

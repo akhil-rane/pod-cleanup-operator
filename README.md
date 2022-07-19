@@ -10,19 +10,14 @@ You’ll need a Kubernetes cluster to run against. You can use [KIND](https://si
 **Note:** Your controller will automatically use the current context in your kubeconfig file (i.e. whatever cluster `kubectl cluster-info` shows).
 
 ### Running on the cluster
-1. Install Instances of Custom Resources:
 
-```sh
-kubectl apply -f config/samples/
-```
-
-2. Build and push your image to the location specified by `IMG`:
+1. Build and push your image to the location specified by `IMG`:
 	
 ```sh
 make docker-build docker-push IMG=<some-registry>/pod-cleanup-operator:tag
 ```
 	
-3. Deploy the controller as well as monitoring stack to the cluster with the image specified by `IMG`:
+2. Deploy the operator as well as monitoring stack to the cluster with the image specified by `IMG`:
 
 ```sh
 make deploy IMG=<some-registry>/pod-cleanup-operator:tag
@@ -35,8 +30,8 @@ To delete the CRDs from the cluster:
 make uninstall
 ```
 
-### Undeploy controller
-UnDeploy the controller to the cluster:
+### Undeploy operator
+UnDeploy the operator to the cluster:
 
 ```sh
 make undeploy
